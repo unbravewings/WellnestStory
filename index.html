@@ -20,9 +20,8 @@
   }
 
   *{box-sizing:border-box;}
-  html,body{height:100%;}
+  html,body{height:100%;margin:0;}
   body{
-    margin:0;
     background:var(--cream);
     color:var(--ink);
     font-family:'Noto Sans Thai', sans-serif;
@@ -41,6 +40,7 @@
     z-index:0;
   }
 
+  /* ── hero ── */
   .stage{
     position:relative;
     z-index:1;
@@ -50,7 +50,7 @@
     align-items:center;
     justify-content:center;
     text-align:center;
-    padding:40px 24px;
+    padding:48px 24px 56px;
   }
 
   .logo-ring{
@@ -62,73 +62,81 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    margin-bottom:30px;
+    margin-bottom:28px;
     box-shadow:0 18px 40px -20px rgba(46,42,34,0.25);
     animation:rise 0.7s ease both;
   }
-  .logo-ring img{
-    width:70%;
-    height:70%;
-    object-fit:contain;
-  }
+  .logo-ring img{width:70%;height:70%;object-fit:contain;}
 
   .brand-name{
     font-family:'Noto Serif Thai', serif;
     font-weight:700;
     font-size:clamp(28px, 5vw, 40px);
-    margin:0 0 10px;
+    margin:0 0 8px;
     letter-spacing:0.01em;
     animation:rise 0.7s ease 0.08s both;
   }
 
   .tagline{
-    font-size:15px;
-    letter-spacing:0.1em;
+    font-size:14px;
+    letter-spacing:0.12em;
     text-transform:uppercase;
     color:var(--sage-dark);
     font-weight:600;
-    margin:0 0 42px;
-    animation:rise 0.7s ease 0.16s both;
+    margin:0 0 20px;
+    animation:rise 0.7s ease 0.14s both;
   }
 
+  /* ── instagram handle row ── */
+  .ig-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:32px;
+    animation:rise 0.7s ease 0.20s both;
+  }
+  .ig-row a{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    text-decoration:none;
+    color:#9a8f78;
+    font-size:13.5px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    padding:5px 12px 5px 8px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    transition:color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .ig-row a:hover{
+    color:var(--clay);
+    border-color:var(--clay-soft);
+    background:#fdf6f1;
+  }
+  .ig-row svg{
+    width:15px;
+    height:15px;
+    flex-shrink:0;
+  }
+
+  /* ── divider ── */
   .divider{
-    width:46px;
+    width:40px;
     height:2px;
     background:var(--gold);
     margin:0 0 28px;
-    animation:rise 0.7s ease 0.2s both;
+    animation:rise 0.7s ease 0.24s both;
   }
 
-  .social-link{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    background:var(--paper);
-    border:1.5px solid var(--line);
-    color:var(--sage-dark);
-    margin-bottom:36px;
-    transition:transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-    animation:rise 0.7s ease 0.23s both;
-  }
-  .social-link:hover{
-    transform:translateY(-2px);
-    border-color:var(--clay);
-    color:var(--clay);
-  }
-  .social-link svg{
-    width:22px;
-    height:22px;
-  }
-
+  /* ── cta ── */
   .actions{
     display:flex;
     flex-direction:column;
-    gap:14px;
     align-items:center;
-    animation:rise 0.7s ease 0.26s both;
+    gap:12px;
+    animation:rise 0.7s ease 0.30s both;
   }
 
   .btn-primary{
@@ -144,23 +152,21 @@
     text-decoration:none;
     display:inline-block;
     box-shadow:0 10px 24px -10px rgba(201,123,91,0.55);
-    transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    transition:transform 0.15s ease, background 0.15s ease;
   }
-  .btn-primary:hover{
-    transform:translateY(-2px);
-    background:#B96A4C;
-  }
+  .btn-primary:hover{transform:translateY(-2px);background:#B96A4C;}
   .btn-primary:active{transform:translateY(0);}
 
   .btn-caption{
     font-size:12.5px;
     color:#9a8f78;
     max-width:280px;
+    margin:0;
   }
 
   @keyframes rise{
-    from{opacity:0; transform:translateY(14px);}
-    to{opacity:1; transform:translateY(0);}
+    from{opacity:0;transform:translateY(14px);}
+    to{opacity:1;transform:translateY(0);}
   }
 
   footer{
@@ -172,20 +178,18 @@
     padding-bottom:28px;
   }
 
+  /* ── responsive ── */
   @media (max-width:480px){
-    .logo-ring{width:148px;height:148px;margin-bottom:24px;}
-    .tagline{font-size:13px;margin-bottom:34px;}
+    .logo-ring{width:148px;height:148px;margin-bottom:22px;}
+    .tagline{font-size:12.5px;margin-bottom:16px;}
     .btn-primary{width:100%;max-width:320px;}
   }
-
   @media (max-width:360px){
-    .logo-ring{width:124px;height:124px;margin-bottom:20px;}
+    .logo-ring{width:124px;height:124px;}
     .brand-name{font-size:24px;}
-    .tagline{font-size:12px;margin-bottom:28px;letter-spacing:0.06em;}
-    .btn-primary{font-size:15px;padding:14px 32px;}
-    .btn-caption{font-size:11.5px;}
+    .tagline{font-size:11.5px;letter-spacing:0.07em;}
+    .btn-primary{font-size:15px;padding:14px 28px;}
   }
-
   @media (min-width:1000px){
     .logo-ring{width:208px;height:208px;}
   }
@@ -202,15 +206,19 @@
 
   <h1 class="brand-name">Wellnest Story</h1>
   <p class="tagline">your tools for well-being and longevity</p>
-  <div class="divider"></div>
 
-  <a class="social-link" href="https://www.instagram.com/wellnest.story/" target="_blank" rel="noopener noreferrer" aria-label="Wellnest Story on Instagram">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="currentColor" stroke-width="1.8"/>
-      <circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/>
-      <circle cx="17.4" cy="6.6" r="1.15" fill="currentColor"/>
-    </svg>
-  </a>
+  <div class="ig-row">
+    <a href="https://www.instagram.com/wellnest.story/" target="_blank" rel="noopener noreferrer" aria-label="Follow Wellnest Story on Instagram">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="17.4" cy="6.6" r="1.15" fill="currentColor"/>
+      </svg>
+      @wellnest.story
+    </a>
+  </div>
+
+  <div class="divider"></div>
 
   <div class="actions">
     <a class="btn-primary" href="st20.html">แบบประเมินความเครียด</a>

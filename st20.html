@@ -85,20 +85,80 @@
     color:#8a8270;
     letter-spacing:0.04em;
   }
+  /* coin-flip logo */
   .logo{
     width:84px;
     height:84px;
     flex-shrink:0;
     margin-top:2px;
-    display:block;
+    perspective:500px;
+    cursor:pointer;
     text-decoration:none;
-    transition:opacity 0.15s ease;
+    display:block;
   }
-  .logo:hover{opacity:0.8;}
-  .logo img{
+  .logo-inner{
     width:100%;
     height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
+    border-radius:50%;
+  }
+  .logo:hover .logo-inner{
+    transform:rotateY(180deg);
+  }
+  .logo-front,
+  .logo-back{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+  .logo-front{
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 18px -10px rgba(46,42,34,0.22);
+  }
+  .logo-front img{
+    width:72%;
+    height:72%;
     object-fit:contain;
+  }
+  .logo-back{
+    background:var(--sage-dark);
+    border:1.5px solid var(--sage-dark);
+    transform:rotateY(180deg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 18px -10px rgba(46,42,34,0.3);
+  }
+  .logo-back span{
+    font-family:'Noto Sans Thai', sans-serif;
+    font-size:10.5px;
+    font-weight:700;
+    color:#fff;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    line-height:1.35;
+    text-align:center;
+    padding:0 10px;
+  }
+
+  /* eyebrow as home link */
+  .eyebrow-link{
+    text-decoration:none;
+    display:inline-block;
+  }
+  .eyebrow-link .eyebrow{
+    transition:color 0.15s ease;
+  }
+  .eyebrow-link:hover .eyebrow{
+    color:var(--clay);
   }
 
   hr.rule{
@@ -458,11 +518,20 @@
 
   <header>
     <div class="title-block">
-      <span class="eyebrow">Wellnest Story · แบบประเมินตนเอง</span>
+      <a class="eyebrow-link" href="index.html" aria-label="กลับสู่หน้าแรก">
+        <span class="eyebrow">Wellnest Story · แบบประเมินตนเอง</span>
+      </a>
       <h1>แบบประเมินและวิเคราะห์ความเครียดด้วยตนเอง ผ่านแบบประเมินจาก กรมสุขภาพจิต (DEPARTMENT OF MENTAL HEALTH)</h1>
     </div>
     <a class="logo" href="index.html" aria-label="กลับสู่หน้าแรก Wellnest Story">
-      <img src="logo.png" alt="Wellnest Story">
+      <div class="logo-inner">
+        <div class="logo-front">
+          <img src="logo.png" alt="Wellnest Story">
+        </div>
+        <div class="logo-back">
+          <span>back to<br>home</span>
+        </div>
+      </div>
     </a>
   </header>
 
