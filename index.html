@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wellnest Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F6F1E7;
+    --paper:#FCFAF4;
+    --ink:#2E2A22;
+    --sage:#7C8A6E;
+    --sage-dark:#5C6B4F;
+    --clay:#C97B5B;
+    --clay-soft:#E9C9B6;
+    --line:#DDD4C0;
+    --gold:#C9A24B;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Noto Sans Thai', sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .bg-texture{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(circle at 12% 12%, rgba(124,138,110,0.10), transparent 42%),
+      radial-gradient(circle at 88% 88%, rgba(201,123,91,0.10), transparent 42%),
+      radial-gradient(circle at 85% 15%, rgba(201,162,75,0.06), transparent 35%);
+    z-index:0;
+  }
+
+  .stage{
+    position:relative;
+    z-index:1;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px 24px;
+  }
+
+  .logo-ring{
+    width:188px;
+    height:188px;
+    border-radius:50%;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:30px;
+    box-shadow:0 18px 40px -20px rgba(46,42,34,0.25);
+    animation:rise 0.7s ease both;
+  }
+  .logo-ring img{
+    width:70%;
+    height:70%;
+    object-fit:contain;
+  }
+
+  .brand-name{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:700;
+    font-size:clamp(28px, 5vw, 40px);
+    margin:0 0 10px;
+    letter-spacing:0.01em;
+    animation:rise 0.7s ease 0.08s both;
+  }
+
+  .tagline{
+    font-size:15px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--sage-dark);
+    font-weight:600;
+    margin:0 0 42px;
+    animation:rise 0.7s ease 0.16s both;
+  }
+
+  .divider{
+    width:46px;
+    height:2px;
+    background:var(--gold);
+    margin:0 0 42px;
+    animation:rise 0.7s ease 0.2s both;
+  }
+
+  .actions{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    align-items:center;
+    animation:rise 0.7s ease 0.26s both;
+  }
+
+  .btn-primary{
+    font-family:'Noto Sans Thai', sans-serif;
+    font-size:17px;
+    font-weight:700;
+    color:#fff;
+    background:var(--clay);
+    border:none;
+    padding:16px 46px;
+    border-radius:30px;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+    box-shadow:0 10px 24px -10px rgba(201,123,91,0.55);
+    transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    background:#B96A4C;
+  }
+  .btn-primary:active{transform:translateY(0);}
+
+  .btn-caption{
+    font-size:12.5px;
+    color:#9a8f78;
+    max-width:280px;
+  }
+
+  @keyframes rise{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  footer{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    font-size:12px;
+    color:#a89d87;
+    padding-bottom:28px;
+  }
+
+  @media (max-width:480px){
+    .logo-ring{width:148px;height:148px;margin-bottom:24px;}
+    .tagline{font-size:13px;margin-bottom:34px;}
+    .btn-primary{width:100%;max-width:320px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-texture"></div>
+
+<div class="stage">
+  <div class="logo-ring">
+    <img src="logo.png" alt="Wellnest Story">
+  </div>
+
+  <h1 class="brand-name">Wellnest Story</h1>
+  <p class="tagline">your tools for well being and longevity</p>
+  <div class="divider"></div>
+
+  <div class="actions">
+    <a class="btn-primary" href="st20.html">แบบประเมินความเครียด</a>
+    <p class="btn-caption">แบบประเมินความเครียดด้วยตนเอง 20 ข้อ จากกรมสุขภาพจิต</p>
+  </div>
+</div>
+
+<footer>Wellnest Story</footer>
+
+</body>
+</html>
