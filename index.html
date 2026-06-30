@@ -95,8 +95,32 @@
     width:46px;
     height:2px;
     background:var(--gold);
-    margin:0 0 42px;
+    margin:0 0 28px;
     animation:rise 0.7s ease 0.2s both;
+  }
+
+  .social-link{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    color:var(--sage-dark);
+    margin-bottom:36px;
+    transition:transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    animation:rise 0.7s ease 0.23s both;
+  }
+  .social-link:hover{
+    transform:translateY(-2px);
+    border-color:var(--clay);
+    color:var(--clay);
+  }
+  .social-link svg{
+    width:22px;
+    height:22px;
   }
 
   .actions{
@@ -153,6 +177,18 @@
     .tagline{font-size:13px;margin-bottom:34px;}
     .btn-primary{width:100%;max-width:320px;}
   }
+
+  @media (max-width:360px){
+    .logo-ring{width:124px;height:124px;margin-bottom:20px;}
+    .brand-name{font-size:24px;}
+    .tagline{font-size:12px;margin-bottom:28px;letter-spacing:0.06em;}
+    .btn-primary{font-size:15px;padding:14px 32px;}
+    .btn-caption{font-size:11.5px;}
+  }
+
+  @media (min-width:1000px){
+    .logo-ring{width:208px;height:208px;}
+  }
 </style>
 </head>
 <body>
@@ -167,6 +203,14 @@
   <h1 class="brand-name">Wellnest Story</h1>
   <p class="tagline">your tools for well-being and longevity</p>
   <div class="divider"></div>
+
+  <a class="social-link" href="https://www.instagram.com/wellnest.story/" target="_blank" rel="noopener noreferrer" aria-label="Wellnest Story on Instagram">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="17.4" cy="6.6" r="1.15" fill="currentColor"/>
+    </svg>
+  </a>
 
   <div class="actions">
     <a class="btn-primary" href="st20.html">แบบประเมินความเครียด</a>
