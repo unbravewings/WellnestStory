@@ -53,6 +53,11 @@
     background:transparent;color:#fff;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;
   }
   .complete-btn.not-done{border-color:var(--sage);color:var(--sage);}
+  .countdown{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    margin-top:10px;letter-spacing:.5px;
+  }
+  .quest-card.done .countdown{color:rgba(250,245,236,0.75);}
   .screen{display:none;}
   .screen.active{display:block;}
   .back-btn{
@@ -262,7 +267,8 @@ function renderCard(type) {
         <button class="complete-btn ${s.completed ? "" : "not-done"}" id="${type}CompleteBtn">
           ${s.completed ? "✓ ทำสำเร็จแล้ว" : "ทำสำเร็จแล้ว?"}
         </button>
-      </div>`;
+      </div>
+      <div class="countdown" id="${type}Countdown">เลือกเควสใหม่ได้ใน --:--:--</div>`;
     el.onclick = null;
     document.getElementById(type + "CompleteBtn").onclick = (e) => {
       e.stopPropagation();
@@ -276,6 +282,37 @@ function renderHome() {
   renderCard("activity");
   document.getElementById("streakRow").textContent = "🔥 " + computeStreak() + " วันติดต่อกัน";
 }
+
+/* ---------- countdown to midnight ---------- */
+function msUntilMidnight() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+  return next - now;
+}
+function formatHMS(ms) {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+  const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+  const s = String(totalSec % 60).padStart(2, "0");
+  return h + ":" + m + ":" + s;
+}
+function tickCountdown() {
+  const remaining = msUntilMidnight();
+  if (remaining <= 1000) {
+    ["eating", "activity"].forEach((type) => {
+      const s = loadState(type);
+      if (s && s.date !== todayKey()) localStorage.removeItem("wq_" + type);
+    });
+    renderHome();
+    return;
+  }
+  ["eating", "activity"].forEach((type) => {
+    const el = document.getElementById(type + "Countdown");
+    if (el) el.textContent = "เลือกเควสใหม่ได้ใน " + formatHMS(remaining);
+  });
+}
+setInterval(tickCountdown, 1000);
+tickCountdown();
 
 renderHome();
 </script>
