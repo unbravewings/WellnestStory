@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>7 Day Wellness Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@600;700&family=Noto+Sans+Thai:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="quests-data.js"></script>
+<style>
+  :root{
+    --sage:#3F6350;
+    --sage-light:#5C8770;
+    --cream:#FAF5EC;
+    --coral:#E2704F;
+    --gold:#D9A441;
+    --char:#2B2420;
+    --muted:#8a7c6a;
+    --mono:'Space Mono','Courier New',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--cream);color:var(--char);
+    font-family:'Noto Sans Thai','Segoe UI',sans-serif;min-height:100vh;
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:26px 18px 60px;}
+  .eyebrow{font-size:12px;letter-spacing:1px;font-weight:700;margin:0;text-transform:uppercase;color:var(--coral);}
+  h1.heading{font-family:'Noto Serif Thai',serif;font-size:24px;font-weight:700;margin:4px 0 0;}
+  .streak-row{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;color:var(--sage);margin-top:10px;}
+  .quest-card{
+    background:#fff;border-radius:16px;padding:20px;margin-top:16px;
+    border:1px solid #ece2d0;cursor:pointer;transition:box-shadow .15s;
+  }
+  .quest-card:hover{box-shadow:0 4px 14px rgba(0,0,0,0.06);}
+  .quest-card.done{background:var(--sage);border-color:var(--sage);}
+  .quest-card .cat-label{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .quest-card.done .cat-label{color:rgba(250,245,236,0.7);}
+  .quest-card .cat-title{font-family:'Noto Serif Thai',serif;font-size:19px;font-weight:700;margin:4px 0 2px;}
+  .quest-card.done .cat-title{color:#fff;}
+  .quest-card .cat-sub{font-size:12.5px;color:var(--muted);}
+  .quest-card.done .cat-sub{color:rgba(250,245,236,0.65);}
+  .quest-text{font-size:15px;line-height:1.5;margin-top:10px;color:var(--char);}
+  .quest-card.done .quest-text{color:#fff;}
+  .quest-tag{
+    display:inline-block;font-size:11px;font-weight:700;color:var(--coral);
+    background:#fdece4;padding:3px 9px;border-radius:999px;margin-top:8px;
+  }
+  .quest-card.done .quest-tag{background:rgba(255,255,255,0.18);color:#fff;}
+  .complete-row{display:flex;align-items:center;gap:8px;margin-top:14px;}
+  .complete-btn{
+    padding:8px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.6);
+    background:transparent;color:#fff;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;
+  }
+  .complete-btn.not-done{border-color:var(--sage);color:var(--sage);}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .back-btn{
+    background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;
+    padding:0;margin-bottom:14px;font-family:inherit;
+  }
+  .subcat-btn{
+    width:100%;text-align:left;background:#fff;border:1px solid #ece2d0;border-radius:12px;
+    padding:16px;margin-top:10px;cursor:pointer;font-family:inherit;
+  }
+  .subcat-btn:hover{border-color:var(--sage-light);}
+  .subcat-btn .name{font-weight:700;font-size:15px;color:var(--char);}
+  .subcat-btn .desc{font-size:12px;color:var(--muted);margin-top:3px;}
+  .subcat-btn.random{background:var(--coral);border-color:var(--coral);}
+  .subcat-btn.random .name,.subcat-btn.random .desc{color:#fff;}
+  .reveal-card{
+    background:var(--sage);border-radius:16px;padding:24px;margin-top:16px;text-align:center;
+  }
+  .reveal-tag{color:var(--gold);font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;}
+  .reveal-text{color:#fff;font-size:17px;line-height:1.5;margin-top:12px;font-weight:500;}
+  .primary-btn{
+    width:100%;padding:12px;border-radius:10px;border:none;background:var(--coral);
+    color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;margin-top:18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HOME SCREEN -->
+  <div class="screen active" id="homeScreen">
+    <p class="eyebrow">7 Day Wellness Quest</p>
+    <h1 class="heading">เควสวันนี้ของคุณ</h1>
+    <div class="streak-row" id="streakRow">🔥 0 วันติดต่อกัน</div>
+
+    <div class="quest-card" id="eatingCard"></div>
+    <div class="quest-card" id="activityCard"></div>
+  </div>
+
+  <!-- SUBCATEGORY SCREEN -->
+  <div class="screen" id="subcatScreen">
+    <button class="back-btn" onclick="goHome()">← กลับหน้าหลัก</button>
+    <p class="eyebrow" id="subcatEyebrow"></p>
+    <h1 class="heading" id="subcatHeading"></h1>
+    <div id="subcatList"></div>
+  </div>
+
+  <!-- REVEAL SCREEN -->
+  <div class="screen" id="revealScreen">
+    <button class="back-btn" onclick="goHome()">← กลับหน้าหลัก</button>
+    <p class="eyebrow">เควสของวันนี้</p>
+    <h1 class="heading">พร้อมลุยหรือยัง</h1>
+    <div class="reveal-card">
+      <p class="reveal-tag" id="revealTag"></p>
+      <p class="reveal-text" id="revealText"></p>
+    </div>
+    <button class="primary-btn" onclick="goHome()">รับเควสนี้</button>
+  </div>
+
+</div>
+
+<script>
+/* ---------- subcategory metadata ---------- */
+const SUBCATS = {
+  eating: [
+    { key: "เพิ่ม", name: "เพิ่ม", desc: "เพิ่มอาหารดี แคลอรี่ต่ำ" },
+    { key: "ลด", name: "ลด", desc: "ลดอาหารแคลอรี่สูง/ของเสีย" },
+    { key: "ประเภท", name: "ประเภท", desc: "เลือกกินอาหารตามหมวดที่กำหนด" },
+    { key: "สุ่มอาหาร", name: "สุ่มอาหาร", desc: "สุ่มเมนูเฉพาะให้ลองกิน" }
+  ],
+  activity: [
+    { key: "ออกกำลังกาย", name: "ออกกำลังกาย", desc: "ท่าออกกำลังกายที่บ้าน" },
+    { key: "งานบ้าน", name: "งานบ้าน", desc: "งานบ้านที่ช่วยเผาผลาญ" },
+    { key: "Lifestyle", name: "Lifestyle", desc: "กิจกรรมสนุกที่เผาผลาญแคลอรี่" },
+    { key: "Small Win", name: "Small Win", desc: "ขยับตัวเพิ่มในชีวิตประจำวัน" }
+  ]
+};
+const TYPE_LABEL = { eating: "อาหาร (Eating Quest)", activity: "กิจกรรม (Activity Quest)" };
+
+/* ---------- storage ---------- */
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+function loadState(type) {
+  try { return JSON.parse(localStorage.getItem("wq_" + type)); } catch (e) { return null; }
+}
+function saveState(type, state) { localStorage.setItem("wq_" + type, JSON.stringify(state)); }
+function loadCompletedDates() {
+  try { return JSON.parse(localStorage.getItem("wq_completed_dates")) || []; } catch (e) { return []; }
+}
+function saveCompletedDates(arr) { localStorage.setItem("wq_completed_dates", JSON.stringify(arr)); }
+
+/* clear stale (yesterday's) quest state on load */
+["eating", "activity"].forEach((type) => {
+  const s = loadState(type);
+  if (s && s.date !== todayKey()) localStorage.removeItem("wq_" + type);
+});
+
+/* ---------- quest picking ---------- */
+function pickQuest(type, subcatKey) {
+  let actualKey = subcatKey;
+  if (subcatKey === "สุ่ม") {
+    const others = SUBCATS[type].filter((s) => s.key !== "สุ่ม").map((s) => s.key);
+    actualKey = others[Math.floor(Math.random() * others.length)];
+  }
+  const list = QUESTS[type][actualKey];
+  const prevState = loadState(type);
+  let choice;
+  const pool = list.filter((q) => !prevState || q !== prevState.lastText);
+  const usePool = pool.length > 0 ? pool : list;
+  choice = usePool[Math.floor(Math.random() * usePool.length)];
+  return { subcatKey: actualKey, text: choice };
+}
+
+function selectSubcat(type, subcatKey) {
+  const result = pickQuest(type, subcatKey);
+  const state = {
+    date: todayKey(),
+    subcatKey: result.subcatKey,
+    text: result.text,
+    lastText: result.text,
+    completed: false,
+    pickedFrom: subcatKey
+  };
+  saveState(type, state);
+  showReveal(type, state);
+}
+
+/* ---------- streak ---------- */
+function computeStreak() {
+  const dates = new Set(loadCompletedDates());
+  let streak = 0;
+  let cursor = new Date();
+  while (dates.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+function checkAndRecordFullCompletion() {
+  const e = loadState("eating");
+  const a = loadState("activity");
+  if (e && e.completed && a && a.completed) {
+    const dates = loadCompletedDates();
+    if (!dates.includes(todayKey())) {
+      dates.push(todayKey());
+      saveCompletedDates(dates);
+    }
+  }
+}
+
+/* ---------- screens ---------- */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach((el) => el.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function goHome() { renderHome(); showScreen("homeScreen"); }
+
+function openSubcatScreen(type) {
+  document.getElementById("subcatEyebrow").textContent = "เลือกประเภทเควส";
+  document.getElementById("subcatHeading").textContent = TYPE_LABEL[type];
+  const listEl = document.getElementById("subcatList");
+  listEl.innerHTML = "";
+  SUBCATS[type].forEach((s) => {
+    const btn = document.createElement("button");
+    btn.className = "subcat-btn" + (s.key === "สุ่ม" ? " random" : "");
+    btn.innerHTML = `<div class="name">${s.name}</div><div class="desc">${s.desc}</div>`;
+    btn.onclick = () => selectSubcat(type, s.key);
+    listEl.appendChild(btn);
+  });
+  showScreen("subcatScreen");
+}
+
+function showReveal(type, state) {
+  document.getElementById("revealTag").textContent = TYPE_LABEL[type] + " · " + state.subcatKey;
+  document.getElementById("revealText").textContent = state.text;
+  showScreen("revealScreen");
+}
+
+function toggleComplete(type) {
+  const s = loadState(type);
+  if (!s) return;
+  s.completed = !s.completed;
+  saveState(type, s);
+  checkAndRecordFullCompletion();
+  renderHome();
+}
+
+/* ---------- render home ---------- */
+function renderCard(type) {
+  const el = document.getElementById(type + "Card");
+  const s = loadState(type);
+  if (!s) {
+    el.className = "quest-card";
+    el.innerHTML = `
+      <div class="cat-label">${type === "eating" ? "Eating Quest" : "Activity Quest"}</div>
+      <div class="cat-title">${TYPE_LABEL[type]}</div>
+      <div class="cat-sub">แตะเพื่อเลือกเควสของวันนี้</div>`;
+    el.onclick = () => openSubcatScreen(type);
+  } else {
+    el.className = "quest-card" + (s.completed ? " done" : "");
+    el.innerHTML = `
+      <div class="cat-label">${type === "eating" ? "Eating Quest" : "Activity Quest"}</div>
+      <div class="cat-title">${TYPE_LABEL[type]}</div>
+      <div class="quest-text">${s.text}</div>
+      <span class="quest-tag">${s.subcatKey}</span>
+      <div class="complete-row">
+        <button class="complete-btn ${s.completed ? "" : "not-done"}" id="${type}CompleteBtn">
+          ${s.completed ? "✓ ทำสำเร็จแล้ว" : "ทำสำเร็จแล้ว?"}
+        </button>
+      </div>`;
+    el.onclick = null;
+    document.getElementById(type + "CompleteBtn").onclick = (e) => {
+      e.stopPropagation();
+      toggleComplete(type);
+    };
+  }
+}
+
+function renderHome() {
+  renderCard("eating");
+  renderCard("activity");
+  document.getElementById("streakRow").textContent = "🔥 " + computeStreak() + " วันติดต่อกัน";
+}
+
+renderHome();
+</script>
+</body>
+</html>
