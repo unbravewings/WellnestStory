@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>เส้นทางสุขภาพของคุณ | Optimal Health Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@600;700&family=Noto+Sans+Thai:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+  :root{
+    --indigo:#2B3A67;
+    --cream:#F5EEDD;
+    --clay:#B5502D;
+    --rice:#5C7A4E;
+    --gold:#D9A441;
+    --char:#2B2420;
+    --mono:'Space Mono','Courier New',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--char);
+    font-family:'Noto Sans Thai','Segoe UI',sans-serif;
+    min-height:100vh;
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:28px 18px 60px;}
+  .eyebrow{font-size:12px;letter-spacing:1px;font-weight:700;margin:0;text-transform:uppercase;color:var(--clay);}
+  h1.heading{font-family:'Noto Serif Thai',serif;font-size:24px;font-weight:700;margin:4px 0 0;}
+  .card{background:#fff;border-radius:14px;padding:18px;border:1px solid #eee2d0;}
+  .section-title{font-size:13px;font-weight:700;color:#6b5f52;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;}
+  label.field-label{font-size:12px;color:#8a7c6a;display:block;margin-bottom:4px;margin-top:8px;}
+  input[type=text],input[type=number]{
+    width:100%;padding:9px 10px;border-radius:8px;border:1px solid #e0d5c2;
+    font-size:14px;background:#fdfaf3;font-family:inherit;
+  }
+  input[type=range]{width:100%;}
+  .btn-primary{
+    width:100%;padding:11px;border-radius:10px;border:none;
+    background:var(--clay);color:#fff;font-weight:700;font-size:14px;cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-secondary{
+    width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--indigo);
+    background:transparent;color:var(--indigo);font-weight:700;font-size:13.5px;cursor:pointer;
+    font-family:inherit;
+  }
+  .reset-btn{background:none;border:none;color:#a99a86;font-size:11.5px;cursor:pointer;padding:0;font-family:inherit;}
+  .badge-pill{
+    background:#f3ead8;color:var(--clay);font-size:12px;font-weight:700;
+    padding:6px 11px;border-radius:999px;border:1px solid #D9A44155;
+    display:inline-flex;align-items:center;gap:5px;
+  }
+  .ikat-band{display:flex;gap:4px;flex-wrap:wrap;}
+  .flip-outer{cursor:pointer;perspective:1000px;height:130px;margin-top:4px;}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+  .flip-inner.flipped{transform:rotateY(180deg);}
+  .flip-face{
+    position:absolute;width:100%;height:100%;border-radius:14px;backface-visibility:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    padding:16px;box-sizing:border-box;
+  }
+  .flip-front{background:var(--rice);}
+  .flip-back{background:var(--cream);border:1px solid #e7ded0;transform:rotateY(180deg);}
+  .overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;
+    align-items:center;justify-content:center;padding:20px;z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .report-card{background:var(--indigo);border-radius:18px;padding:26px;max-width:340px;width:100%;}
+  .report-eyebrow{color:var(--gold);font-family:var(--mono);font-size:11px;letter-spacing:1.5px;}
+  .report-name{color:var(--cream);font-size:20px;font-weight:700;margin-top:4px;}
+  .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
+  .stat-label{color:rgba(245,238,221,.65);font-size:11px;margin-bottom:3px;}
+  .stat-value{color:var(--cream);font-family:var(--mono);font-size:22px;font-weight:700;}
+  .chart-row{display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:13px;}
+  #onboardScreen{display:flex;align-items:center;justify-content:center;min-height:480px;}
+  #onboardScreen .card{max-width:380px;width:100%;}
+  #mainScreen{display:none;}
+  .icon{width:14px;height:14px;vertical-align:-2px;display:inline-block;}
+</style>
+</head>
+<body>
+
+<div id="onboardScreen">
+  <div class="card">
+    <p class="eyebrow">เริ่มต้นเส้นทางของคุณ</p>
+    <h1 class="heading">สวัสดีค่ะ ยินดีต้อนรับ</h1>
+    <p style="color:#6b5f52;font-size:14px;margin-bottom:20px;">กรอกข้อมูลเริ่มต้นเพื่อให้เราติดตามความคืบหน้าไปด้วยกัน</p>
+    <label class="field-label">ชื่อเล่นของคุณ</label>
+    <input type="text" id="ob-name" placeholder="เช่น พี่แนน" />
+    <label class="field-label">น้ำหนักตั้งต้น (กก.)</label>
+    <input type="number" id="ob-start" placeholder="70" />
+    <label class="field-label">น้ำหนักเป้าหมาย (กก.)</label>
+    <input type="number" id="ob-goal" placeholder="62" />
+    <button class="btn-primary" id="ob-submit" style="margin-top:16px;" disabled>เริ่มเลย</button>
+  </div>
+</div>
+
+<div id="mainScreen">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+      <p class="eyebrow" id="greet">สวัสดี</p>
+      <button class="reset-btn" id="resetBtn">↺ เริ่มใหม่</button>
+    </div>
+    <h1 class="heading">เส้นทางสุขภาพของคุณ</h1>
+
+    <div style="background:var(--indigo);border-radius:14px;padding:16px 18px;margin-top:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="color:var(--cream);font-size:13px;font-family:var(--mono);letter-spacing:.5px;">สายต่อเนื่อง</span>
+        <span id="streakNum" style="color:var(--gold);font-family:var(--mono);font-size:20px;font-weight:700;">0 วัน</span>
+      </div>
+      <div class="ikat-band" id="ikatBand"></div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <p class="section-title">เช็กอินวันนี้</p>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <label class="field-label">น้ำหนัก (กก.)</label>
+          <input type="number" id="in-weight" placeholder="70" />
+        </div>
+        <div style="flex:1;">
+          <label class="field-label">รอบเอว (ซม.) - ไม่บังคับ</label>
+          <input type="number" id="in-waist" placeholder="80" />
+        </div>
+      </div>
+      <label class="field-label" id="energyLabel" style="margin-top:10px;">พลังงานวันนี้: ปกติ</label>
+      <input type="range" id="in-energy" min="1" max="5" step="1" value="3" />
+      <button class="btn-primary" id="checkinBtn" style="margin-top:12px;">บันทึกวันนี้</button>
+    </div>
+
+    <div class="card" id="chartCard" style="margin-top:18px;display:none;">
+      <p class="section-title">กราฟน้ำหนัก</p>
+      <svg id="chartSvg" width="100%" height="140" viewBox="0 0 440 140" preserveAspectRatio="none"></svg>
+      <div class="chart-row">
+        <span id="lostText">ลดไปแล้ว 0 กก.</span>
+        <span id="pctText" style="color:var(--rice);"></span>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;">
+      <p class="section-title">เคล็ดลับประจำวัน</p>
+      <div class="flip-outer" id="flipOuter">
+        <div class="flip-inner" id="flipInner">
+          <div class="flip-face flip-front">
+            <div style="color:var(--cream);font-size:22px;">✦</div>
+            <p style="color:var(--cream);font-family:var(--mono);font-size:12px;margin-top:8px;">แตะเพื่อดูเคล็ดลับวันนี้</p>
+          </div>
+          <div class="flip-face flip-back">
+            <p id="tipTitle" style="font-weight:700;font-size:14px;color:var(--char);margin-bottom:6px;"></p>
+            <p id="tipBody" style="font-size:12.5px;color:#5c5245;line-height:1.5;"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="badgesCard" style="margin-top:18px;display:none;">
+      <p class="section-title">เหรียญที่ได้รับ</p>
+      <div id="badgesList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+
+    <button class="btn-secondary" id="reportBtn" style="margin-top:18px;">📷 สร้างการ์ดความคืบหน้า</button>
+  </div>
+</div>
+
+<div class="overlay" id="reportOverlay">
+  <div style="max-width:340px;width:100%;">
+    <div class="report-card" id="reportCardEl">
+      <p class="report-eyebrow">OPTIMAL HEALTH JOURNEY</p>
+      <p class="report-name" id="rc-name"></p>
+      <div class="report-grid">
+        <div><p class="stat-label">ลดน้ำหนัก</p><p class="stat-value" id="rc-lost"></p></div>
+        <div><p class="stat-label">สายต่อเนื่อง</p><p class="stat-value" id="rc-streak"></p></div>
+        <div><p class="stat-label">ถึงเป้าหมาย</p><p class="stat-value" id="rc-pct"></p></div>
+        <div><p class="stat-label">เหรียญ</p><p class="stat-value" id="rc-badges"></p></div>
+      </div>
+      <div class="ikat-band" id="rc-ikat" style="margin-top:20px;"></div>
+    </div>
+    <button class="btn-primary" id="downloadCardBtn" style="margin-top:14px;">ดาวน์โหลดการ์ด</button>
+    <p style="text-align:center;color:var(--cream);font-size:12.5px;margin-top:10px;">แตะที่ว่างเพื่อปิด</p>
+  </div>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const TIPS = [
+  { title: "สลับข้าวเหนียวเป็นข้าวกล้อง", body: "ลองสลับข้าวเหนียว 1 มื้อ เป็นข้าวกล้องหรือข้าวไรซ์เบอร์รี่ ช่วยลดน้ำตาลในเลือดพุ่งหลังมื้ออาหาร แต่ยังได้ความอิ่มแบบคนอีสาน" },
+  { title: "ส้มตำสูตรเบาไขมัน", body: "ตำถาดโปรดของคุณ ลดน้ำตาลปี๊บลงครึ่งหนึ่ง เพิ่มมะเขือเทศกับถั่วฝักยาว ความอร่อยไม่เปลี่ยนแต่แคลอรี่เบาลงเยอะ" },
+  { title: "ลาบ-ก้อย เน้นเนื้อ ลดข้าวคั่ว", body: "ข้าวคั่วอร่อยแต่แป้งเยอะ ลองลดลงครึ่งช้อน แล้วเพิ่มผักสดแนมแทน อิ่มนานขึ้นโดยไม่ง่วงหลังมื้อเที่ยง" },
+  { title: "น้ำเปล่าก่อนมื้ออาหาร", body: "ดื่มน้ำเปล่า 1 แก้วก่อนมื้ออาหาร 15 นาที ช่วยให้กินได้พอดีขึ้น ไม่ต้องอดทน แค่ปรับจังหวะ" },
+  { title: "เดินรอบหมู่บ้านตอนเย็น", body: "อากาศเย็นตอนเย็นเหมาะกับการเดิน 15-20 นาที ชวนคนในบ้านไปด้วยกัน ได้ทั้งสุขภาพและเวลาคุณภาพ" },
+  { title: "นอนให้ครบ อย่ามองข้าม", body: "นอนน้อยกว่า 6 ชั่วโมงทำให้ฮอร์โมนหิวรวน กินเท่าไหร่ก็ไม่อิ่ม ลองเข้านอนเร็วขึ้น 30 นาทีคืนนี้" },
+  { title: "ป่นปลาแทนของทอด", body: "ของกินเล่นตอนบ่าย ลองเปลี่ยนจากของทอดเป็นป่นปลาหรือไข่ต้ม โปรตีนสูง อิ่มนาน ไม่ง่วงบ่าย" },
+  { title: "แกงหน่อไม้ใยเยอะ กินก่อนข้าว", body: "กินแกงหรือผักที่มีใยอาหารก่อน แล้วค่อยกินข้าว ช่วยให้อิ่มไวขึ้นโดยไม่ต้องลดปริมาณข้าวทันที" },
+  { title: "พักสายตาจากจอตอนเย็น", body: "ความเครียดสะสมทำให้ร่างกายหลั่งฮอร์โมนที่กระตุ้นความอยากอาหาร ลองพัก 10 นาทีจากจอก่อนนอน" },
+  { title: "ชวนคนในทีมมาเช็กอินด้วยกัน", body: "คนอีสานเราเก่งเรื่องความเป็นชุมชน ชวนเพื่อนในทีมมาส่งผลชั่งน้ำหนักพร้อมกันทุกเช้าวันจันทร์ ได้กำลังใจซึ่งกันและกัน" },
+  { title: "ปลาร้าได้ แต่ระวังโซเดียม", body: "ปลาร้ามีรสชาติที่ทดแทนไม่ได้ ใส่แต่พอดี แล้วลดการเติมเกลือหรือน้ำปลาส่วนอื่นในมื้อเดียวกันลง" },
+  { title: "ให้รางวัลตัวเองแบบไม่ใช่อาหาร", body: "ครบสัปดาห์นี้แล้ว ลองให้รางวัลตัวเองด้วยสิ่งที่ไม่ใช่ของกิน เช่น ผ้าถุงลายใหม่ หรือเวลาพักผ่อนที่ตั้งใจไว้" },
+];
+
+const GOLD = "#D9A441";
+
+/* ---------- storage (real device localStorage) ---------- */
+const LS_PROFILE = "ewc_profile";
+const LS_CHECKINS = "ewc_checkins";
+
+function loadProfile() {
+  try { return JSON.parse(localStorage.getItem(LS_PROFILE)); } catch (e) { return null; }
+}
+function saveProfile(p) { localStorage.setItem(LS_PROFILE, JSON.stringify(p)); }
+function loadCheckins() {
+  try { return JSON.parse(localStorage.getItem(LS_CHECKINS)) || []; } catch (e) { return []; }
+}
+function saveCheckins(c) { localStorage.setItem(LS_CHECKINS, JSON.stringify(c)); }
+
+/* ---------- helpers ---------- */
+function dayKey(d) { return d.toISOString().slice(0, 10); }
+function todayKey() { return dayKey(new Date()); }
+function tipForToday() {
+  const start = new Date(2026, 0, 1);
+  const diff = Math.floor((new Date() - start) / 86400000);
+  return TIPS[((diff % TIPS.length) + TIPS.length) % TIPS.length];
+}
+function computeStreak(checkins) {
+  const dates = new Set(checkins.map((c) => c.date));
+  let streak = 0;
+  let cursor = new Date();
+  while (dates.has(dayKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+function ikatSVG(streak) {
+  const max = 14;
+  const filled = Math.min(streak, max);
+  let html = "";
+  for (let i = 0; i < max; i++) {
+    const on = i < filled;
+    html += `<svg width="20" height="20" viewBox="0 0 20 20">
+      <rect x="3" y="3" width="14" height="14" transform="rotate(45 10 10)"
+        fill="${on ? GOLD : "none"}"
+        stroke="${on ? GOLD : "rgba(245,238,221,0.35)"}" stroke-width="1.5" />
+    </svg>`;
+  }
+  return html;
+}
+
+/* ---------- state ---------- */
+let profile = loadProfile();
+let checkins = loadCheckins();
+let flipped = false;
+
+/* ---------- onboarding ---------- */
+const obName = document.getElementById("ob-name");
+const obStart = document.getElementById("ob-start");
+const obGoal = document.getElementById("ob-goal");
+const obSubmit = document.getElementById("ob-submit");
+
+function checkObValid() {
+  obSubmit.disabled = !(obStart.value && obGoal.value);
+}
+[obStart, obGoal].forEach((el) => el.addEventListener("input", checkObValid));
+
+obSubmit.addEventListener("click", () => {
+  profile = {
+    name: obName.value || "คุณ",
+    startWeight: Number(obStart.value),
+    goalWeight: Number(obGoal.value),
+    startDate: todayKey(),
+  };
+  saveProfile(profile);
+  render();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm("ต้องการเริ่มต้นใหม่ทั้งหมดใช่หรือไม่ ข้อมูลเดิมจะถูกลบถาวร")) return;
+  localStorage.removeItem(LS_PROFILE);
+  localStorage.removeItem(LS_CHECKINS);
+  profile = null;
+  checkins = [];
+  render();
+});
+
+/* ---------- checkin ---------- */
+const energyLabels = ["แย่มาก", "แย่", "ปกติ", "ดี", "ดีมาก"];
+const inEnergy = document.getElementById("in-energy");
+inEnergy.addEventListener("input", () => {
+  document.getElementById("energyLabel").textContent = "พลังงานวันนี้: " + energyLabels[inEnergy.value - 1];
+});
+
+document.getElementById("checkinBtn").addEventListener("click", () => {
+  const weight = document.getElementById("in-weight").value;
+  if (!weight) return;
+  const waist = document.getElementById("in-waist").value;
+  const entry = {
+    date: todayKey(),
+    weight: Number(weight),
+    waist: waist ? Number(waist) : null,
+    energy: Number(inEnergy.value),
+  };
+  checkins = checkins.filter((c) => c.date !== entry.date).concat(entry);
+  saveCheckins(checkins);
+  const btn = document.getElementById("checkinBtn");
+  btn.textContent = "บันทึกแล้ว ✓";
+  setTimeout(() => (btn.textContent = "บันทึกวันนี้"), 2000);
+  render();
+});
+
+/* ---------- flip card ---------- */
+document.getElementById("flipOuter").addEventListener("click", () => {
+  flipped = !flipped;
+  document.getElementById("flipInner").classList.toggle("flipped", flipped);
+});
+
+/* ---------- report card ---------- */
+document.getElementById("reportBtn").addEventListener("click", () => {
+  document.getElementById("reportOverlay").classList.add("show");
+});
+document.getElementById("reportOverlay").addEventListener("click", (e) => {
+  if (e.target.id === "reportOverlay") {
+    document.getElementById("reportOverlay").classList.remove("show");
+  }
+});
+document.getElementById("downloadCardBtn").addEventListener("click", () => {
+  html2canvas(document.getElementById("reportCardEl"), { backgroundColor: null, scale: 2 }).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = "progress-card.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+});
+
+/* ---------- chart (plain SVG, no libraries) ---------- */
+function renderChart(sortedCheckins) {
+  const svg = document.getElementById("chartSvg");
+  svg.innerHTML = "";
+  if (sortedCheckins.length < 2) return;
+  const weights = sortedCheckins.map((c) => c.weight);
+  const min = Math.min(...weights) - 1;
+  const max = Math.max(...weights) + 1;
+  const w = 440, h = 140, padX = 10, padY = 14;
+  const stepX = (w - padX * 2) / (sortedCheckins.length - 1);
+  const pts = sortedCheckins.map((c, i) => {
+    const x = padX + i * stepX;
+    const y = h - padY - ((c.weight - min) / (max - min || 1)) * (h - padY * 2);
+    return [x, y];
+  });
+  const path = pts.map((p, i) => (i === 0 ? "M" : "L") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+  const ns = "http://www.w3.org/2000/svg";
+  const line = document.createElementNS(ns, "path");
+  line.setAttribute("d", path);
+  line.setAttribute("fill", "none");
+  line.setAttribute("stroke", "#B5502D");
+  line.setAttribute("stroke-width", "2.5");
+  svg.appendChild(line);
+  pts.forEach((p) => {
+    const c = document.createElementNS(ns, "circle");
+    c.setAttribute("cx", p[0]); c.setAttribute("cy", p[1]); c.setAttribute("r", "3");
+    c.setAttribute("fill", "#B5502D");
+    svg.appendChild(c);
+  });
+}
+
+/* ---------- badges ---------- */
+function computeBadges(streak, weightLost, progressPct, checkinCount) {
+  const list = [];
+  if (checkinCount >= 1) list.push({ label: "เริ่มต้นแล้ว", icon: "✦" });
+  if (streak >= 3) list.push({ label: "สาย 3 วัน", icon: "🔥" });
+  if (streak >= 7) list.push({ label: "สาย 7 วัน", icon: "🔥" });
+  if (streak >= 14) list.push({ label: "สาย 14 วัน", icon: "🔥" });
+  if (weightLost >= 1) list.push({ label: "ลดได้ 1 กก.", icon: "🏆" });
+  if (weightLost >= 3) list.push({ label: "ลดได้ 3 กก.", icon: "🏆" });
+  if (weightLost >= 5) list.push({ label: "ลดได้ 5 กก.", icon: "🏆" });
+  if (progressPct >= 50) list.push({ label: "ครึ่งทางแล้ว", icon: "🏆" });
+  return list;
+}
+
+/* ---------- main render ---------- */
+function render() {
+  if (!profile) {
+    document.getElementById("onboardScreen").style.display = "flex";
+    document.getElementById("mainScreen").style.display = "none";
+    return;
+  }
+  document.getElementById("onboardScreen").style.display = "none";
+  document.getElementById("mainScreen").style.display = "block";
+
+  document.getElementById("greet").textContent = "สวัสดี " + profile.name;
+
+  const sorted = [...checkins].sort((a, b) => a.date.localeCompare(b.date));
+  const latest = sorted[sorted.length - 1];
+  const startWeight = Number(profile.startWeight);
+  const currentWeight = latest ? Number(latest.weight) : startWeight;
+  const weightLost = +(startWeight - currentWeight).toFixed(1);
+  const goalWeight = Number(profile.goalWeight);
+  const totalToLose = +(startWeight - goalWeight).toFixed(1);
+  const progressPct = totalToLose > 0 ? Math.max(0, Math.min(100, Math.round((weightLost / totalToLose) * 100))) : 0;
+  const streak = computeStreak(checkins);
+
+  document.getElementById("streakNum").textContent = streak + " วัน";
+  document.getElementById("ikatBand").innerHTML = ikatSVG(streak);
+  document.getElementById("in-weight").placeholder = String(currentWeight);
+
+  const tip = tipForToday();
+  document.getElementById("tipTitle").textContent = tip.title;
+  document.getElementById("tipBody").textContent = tip.body;
+
+  const chartCard = document.getElementById("chartCard");
+  if (sorted.length > 1) {
+    chartCard.style.display = "block";
+    renderChart(sorted);
+    document.getElementById("lostText").textContent = "ลดไปแล้ว " + (weightLost > 0 ? weightLost : 0) + " กก.";
+    document.getElementById("pctText").textContent = totalToLose ? progressPct + "% ถึงเป้าหมาย" : "";
+  } else {
+    chartCard.style.display = "none";
+  }
+
+  const badges = computeBadges(streak, weightLost, progressPct, checkins.length);
+  const badgesCard = document.getElementById("badgesCard");
+  if (badges.length > 0) {
+    badgesCard.style.display = "block";
+    document.getElementById("badgesList").innerHTML = badges
+      .map((b) => `<span class="badge-pill">${b.icon} ${b.label}</span>`)
+      .join("");
+  } else {
+    badgesCard.style.display = "none";
+  }
+
+  document.getElementById("rc-name").textContent = profile.name;
+  document.getElementById("rc-lost").textContent = (weightLost > 0 ? weightLost : 0) + " กก.";
+  document.getElementById("rc-streak").textContent = streak + " วัน";
+  document.getElementById("rc-pct").textContent = progressPct + "%";
+  document.getElementById("rc-badges").textContent = badges.length;
+  document.getElementById("rc-ikat").innerHTML = ikatSVG(streak);
+}
+
+render();
+</script>
+</body>
+</html>
