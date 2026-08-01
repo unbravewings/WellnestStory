@@ -12,54 +12,75 @@
   :root{
     --sage:#3F6350;
     --sage-light:#5C8770;
-    --cream:#FAF5EC;
+    --cream:#F1ECE3;
     --coral:#E2704F;
     --gold:#D9A441;
-    --char:#2B2420;
-    --muted:#8a7c6a;
+    --char:#241F19;
+    --muted:#948B7C;
+    --peach:#F6D9AC;
+    --peach-strong:#E8A252;
+    --mint:#D7E7C6;
+    --mint-strong:#7FA868;
+    --grey-circle:#DAD4C8;
     --mono:'Space Mono','Courier New',monospace;
   }
+  .theme-eating{--accent-soft:var(--peach);--accent-strong:var(--peach-strong);}
+  .theme-activity{--accent-soft:var(--mint);--accent-strong:var(--mint-strong);}
   *{box-sizing:border-box;}
   body{
     margin:0;background:var(--cream);color:var(--char);
     font-family:'Noto Sans Thai','Segoe UI',sans-serif;min-height:100vh;
   }
   .wrap{max-width:480px;margin:0 auto;padding:26px 18px 60px;}
-  .logo-row{display:flex;justify-content:center;margin-bottom:6px;}
-  .logo-row img{width:88px;height:88px;object-fit:contain;}
+  .top-row{display:flex;justify-content:space-between;align-items:flex-start;}
+  .top-row img{width:52px;height:52px;object-fit:contain;border-radius:50%;background:#fff;padding:6px;border:1px solid #ece2d0;}
   .eyebrow{font-size:12px;letter-spacing:1px;font-weight:700;margin:0;text-transform:uppercase;color:var(--coral);}
-  h1.heading{font-family:'Noto Serif Thai',serif;font-size:24px;font-weight:700;margin:4px 0 0;}
-  .streak-row{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;color:var(--sage);margin-top:10px;}
+  h1.heading{font-family:'Noto Serif Thai',serif;font-size:26px;font-weight:700;margin:4px 0 0;}
+  .streak-header{
+    display:flex;align-items:center;gap:6px;margin-top:20px;
+    font-family:var(--mono);font-size:13px;color:var(--sage);font-weight:700;
+  }
+  .week-row{display:flex;justify-content:space-between;margin-top:10px;}
+  .week-circle{
+    width:38px;height:38px;border-radius:50%;background:var(--grey-circle);
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:700;color:var(--char);
+  }
+  .week-circle.complete{background:var(--peach-strong);color:#fff;}
+  .week-circle.today{box-shadow:0 0 0 2px var(--coral);}
   .quest-card{
-    background:#fff;border-radius:16px;padding:20px;margin-top:16px;
-    border:1px solid #ece2d0;cursor:pointer;transition:box-shadow .15s;
+    border-radius:22px;padding:22px;margin-top:16px;
+    border:none;cursor:pointer;transition:box-shadow .15s;
+    box-shadow:0 1px 4px rgba(36,31,25,0.06);
   }
   .quest-card:hover{box-shadow:0 4px 14px rgba(0,0,0,0.06);}
-  .quest-card.done{background:var(--sage);border-color:var(--sage);}
+  .quest-card.eating-idle,.quest-card.eating-active{background:var(--peach);}
+  .quest-card.activity-idle,.quest-card.activity-active{background:var(--mint);}
+  .quest-card.eating-done{background:var(--peach-strong);}
+  .quest-card.activity-done{background:var(--mint-strong);}
   .quest-card .cat-label{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
-  .quest-card.done .cat-label{color:rgba(250,245,236,0.7);}
-  .quest-card .cat-title{font-family:'Noto Serif Thai',serif;font-size:19px;font-weight:700;margin:4px 0 2px;}
-  .quest-card.done .cat-title{color:#fff;}
+  .quest-card.eating-done .cat-label,.quest-card.activity-done .cat-label{color:rgba(255,255,255,0.75);}
+  .quest-card .cat-title{font-family:'Noto Serif Thai',serif;font-size:19px;font-weight:700;margin:4px 0 2px;color:var(--char);}
+  .quest-card.eating-done .cat-title,.quest-card.activity-done .cat-title{color:#fff;}
   .quest-card .cat-sub{font-size:12.5px;color:var(--muted);}
-  .quest-card.done .cat-sub{color:rgba(250,245,236,0.65);}
   .quest-text{font-size:15px;line-height:1.5;margin-top:10px;color:var(--char);}
-  .quest-card.done .quest-text{color:#fff;}
+  .quest-card.eating-done .quest-text,.quest-card.activity-done .quest-text{color:#fff;}
   .quest-tag{
-    display:inline-block;font-size:11px;font-weight:700;color:var(--coral);
-    background:#fdece4;padding:3px 9px;border-radius:999px;margin-top:8px;
+    display:inline-block;font-size:11px;font-weight:700;color:var(--char);
+    background:#fff;padding:3px 9px;border-radius:999px;margin-top:8px;
   }
-  .quest-card.done .quest-tag{background:rgba(255,255,255,0.18);color:#fff;}
+  .quest-card.eating-done .quest-tag,.quest-card.activity-done .quest-tag{background:rgba(255,255,255,0.25);color:#fff;}
   .complete-row{display:flex;align-items:center;gap:8px;margin-top:14px;}
   .complete-btn{
-    padding:8px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.6);
-    background:transparent;color:#fff;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;
+    padding:8px 14px;border-radius:8px;border:1.5px solid var(--char);
+    background:transparent;color:var(--char);font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;
   }
-  .complete-btn.not-done{border-color:var(--sage);color:var(--sage);}
+  .complete-btn.done-state{border-color:#fff;color:#fff;}
   .countdown{
     font-family:var(--mono);font-size:11.5px;color:var(--muted);
     margin-top:10px;letter-spacing:.5px;
   }
-  .quest-card.done .countdown{color:rgba(250,245,236,0.75);}
+  .quest-card.eating-done .countdown,.quest-card.activity-done .countdown{color:rgba(255,255,255,0.75);}
   .screen{display:none;}
   .screen.active{display:block;}
   .back-btn{
@@ -67,18 +88,17 @@
     padding:0;margin-bottom:14px;font-family:inherit;
   }
   .subcat-btn{
-    width:100%;text-align:left;background:#fff;border:1px solid #ece2d0;border-radius:12px;
+    width:100%;text-align:left;background:var(--accent-soft,#fff);border:none;border-radius:18px;
     padding:16px;margin-top:10px;cursor:pointer;font-family:inherit;
+    box-shadow:0 1px 4px rgba(36,31,25,0.06);transition:box-shadow .15s;
   }
-  .subcat-btn:hover{border-color:var(--sage-light);}
+  .subcat-btn:hover{box-shadow:0 3px 10px rgba(36,31,25,0.1);}
   .subcat-btn .name{font-weight:700;font-size:15px;color:var(--char);}
-  .subcat-btn .desc{font-size:12px;color:var(--muted);margin-top:3px;}
-  .subcat-btn.random{background:var(--coral);border-color:var(--coral);}
-  .subcat-btn.random .name,.subcat-btn.random .desc{color:#fff;}
+  .subcat-btn .desc{font-size:12px;color:var(--char);opacity:0.65;margin-top:3px;}
   .reveal-card{
-    background:var(--sage);border-radius:16px;padding:24px;margin-top:16px;text-align:center;
+    background:var(--accent-strong,var(--sage));border-radius:22px;padding:24px;margin-top:16px;text-align:center;
   }
-  .reveal-tag{color:var(--gold);font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;}
+  .reveal-tag{color:rgba(255,255,255,0.85);font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;}
   .reveal-text{color:#fff;font-size:17px;line-height:1.5;margin-top:12px;font-weight:500;}
   .primary-btn{
     width:100%;padding:12px;border-radius:10px;border:none;background:var(--coral);
@@ -92,10 +112,16 @@
 
   <!-- HOME SCREEN -->
   <div class="screen active" id="homeScreen">
-    <div class="logo-row"><img src="logo.png" alt="Wellnest Story logo" /></div>
-    <p class="eyebrow">7 Days Wellnest Story Quest</p>
-    <h1 class="heading">เควสวันนี้ของคุณ</h1>
-    <div class="streak-row" id="streakRow">🔥 0 วันติดต่อกัน</div>
+    <div class="top-row">
+      <div>
+        <p class="eyebrow">7 Days Wellnest Story Quest</p>
+        <h1 class="heading">เควสวันนี้ของคุณ</h1>
+      </div>
+      <img src="logo.png" alt="Wellnest Story logo" />
+    </div>
+
+    <div class="streak-header"><span id="streakEmoji">🔥</span><span id="streakNum">0</span><span>Day Streak</span></div>
+    <div class="week-row" id="weekRow"></div>
 
     <div class="quest-card" id="eatingCard"></div>
     <div class="quest-card" id="activityCard"></div>
@@ -225,13 +251,14 @@ function showScreen(id) {
 function goHome() { renderHome(); showScreen("homeScreen"); }
 
 function openSubcatScreen(type) {
+  document.getElementById("subcatScreen").className = "screen theme-" + type;
   document.getElementById("subcatEyebrow").textContent = "เลือกประเภทเควส";
   document.getElementById("subcatHeading").textContent = TYPE_LABEL[type];
   const listEl = document.getElementById("subcatList");
   listEl.innerHTML = "";
   SUBCATS[type].forEach((s) => {
     const btn = document.createElement("button");
-    btn.className = "subcat-btn" + (s.key === "สุ่ม" ? " random" : "");
+    btn.className = "subcat-btn";
     btn.innerHTML = `<div class="name">${s.name}</div><div class="desc">${s.desc}</div>`;
     btn.onclick = () => selectSubcat(type, s.key);
     listEl.appendChild(btn);
@@ -240,6 +267,7 @@ function openSubcatScreen(type) {
 }
 
 function showReveal(type, state) {
+  document.getElementById("revealScreen").className = "screen theme-" + type;
   document.getElementById("revealTag").textContent = TYPE_LABEL[type] + " · " + state.subcatKey;
   document.getElementById("revealText").textContent = state.text;
   showScreen("revealScreen");
@@ -259,21 +287,21 @@ function renderCard(type) {
   const el = document.getElementById(type + "Card");
   const s = loadState(type);
   if (!s) {
-    el.className = "quest-card";
+    el.className = "quest-card " + type + "-idle";
     el.innerHTML = `
       <div class="cat-label">${type === "eating" ? "Eating Quest" : "Activity Quest"}</div>
       <div class="cat-title">${TYPE_LABEL[type]}</div>
       <div class="cat-sub">แตะเพื่อเลือกเควสของวันนี้</div>`;
     el.onclick = () => openSubcatScreen(type);
   } else {
-    el.className = "quest-card" + (s.completed ? " done" : "");
+    el.className = "quest-card " + type + (s.completed ? "-done" : "-active");
     el.innerHTML = `
       <div class="cat-label">${type === "eating" ? "Eating Quest" : "Activity Quest"}</div>
       <div class="cat-title">${TYPE_LABEL[type]}</div>
       <div class="quest-text">${s.text}</div>
       <span class="quest-tag">${s.subcatKey}</span>
       <div class="complete-row">
-        <button class="complete-btn ${s.completed ? "" : "not-done"}" id="${type}CompleteBtn">
+        <button class="complete-btn ${s.completed ? "done-state" : ""}" id="${type}CompleteBtn">
           ${s.completed ? "✓ ทำสำเร็จแล้ว" : "ทำสำเร็จแล้ว?"}
         </button>
       </div>
@@ -286,10 +314,57 @@ function renderCard(type) {
   }
 }
 
+/* ---------- week streak row (Day 1-7 program cycle, not calendar week) ---------- */
+function parseDateKey(key) {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+function getProgramStart() {
+  let key = localStorage.getItem("wq_program_start");
+  if (!key) {
+    key = todayKey();
+    localStorage.setItem("wq_program_start", key);
+  }
+  return parseDateKey(key);
+}
+function getCycleDates() {
+  const start = getProgramStart();
+  const today = new Date();
+  const startMid = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const daysSince = Math.round((todayMid - startMid) / 86400000);
+  const cycleIndex = Math.floor(daysSince / 7);
+  const cycleStart = new Date(startMid);
+  cycleStart.setDate(startMid.getDate() + cycleIndex * 7);
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(cycleStart);
+    d.setDate(cycleStart.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+function renderWeekRow() {
+  const completed = new Set(loadCompletedDates());
+  const today = todayKey();
+  const el = document.getElementById("weekRow");
+  el.innerHTML = "";
+  getCycleDates().forEach((d, i) => {
+    const key = todayKey(d);
+    const isComplete = completed.has(key);
+    const isToday = key === today;
+    const circle = document.createElement("div");
+    circle.className = "week-circle " + (isComplete ? "complete " : "") + (isToday ? "today" : "");
+    circle.textContent = i + 1;
+    el.appendChild(circle);
+  });
+}
+
 function renderHome() {
   renderCard("eating");
   renderCard("activity");
-  document.getElementById("streakRow").textContent = "🔥 " + computeStreak() + " วันติดต่อกัน";
+  document.getElementById("streakNum").textContent = computeStreak();
+  renderWeekRow();
 }
 
 /* ---------- countdown to midnight ---------- */
