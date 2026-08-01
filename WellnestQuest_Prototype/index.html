@@ -190,6 +190,16 @@ function saveCompletedDates(arr) { localStorage.setItem("wq_completed_dates", JS
   if (s && s.date !== todayKey()) localStorage.removeItem("wq_" + type);
 });
 
+/* self-heal: remove any completed-date entries dated after today.
+   these could only exist from the old UTC-based date bug (fixed earlier),
+   which sometimes recorded a "future" local date near midnight. */
+(function cleanFutureCompletedDates() {
+  const today = todayKey();
+  const dates = loadCompletedDates();
+  const cleaned = dates.filter((d) => d <= today);
+  if (cleaned.length !== dates.length) saveCompletedDates(cleaned);
+})();
+
 /* ---------- quest picking ---------- */
 function pickQuest(type, subcatKey) {
   let actualKey = subcatKey;
