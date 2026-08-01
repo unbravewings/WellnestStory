@@ -1,4 +1,4 @@
-# 7 Day Wellness Quest
+# 7 Days Wellnest Story Quest
 
 เควสประจำวันคู่กับโปรแกรมลดน้ำหนัก Nutrilite — เว็บแอปสำหรับสุ่มเควส Eating Quest และ Activity Quest ให้ลูกค้าทำวันละ 1 อย่างต่อประเภท
 
@@ -39,7 +39,7 @@
 ## วิธีอัปโหลดขึ้น GitHub และเปิดใช้งานฟรี (GitHub Pages)
 
 1. สร้าง repository ใหม่บน GitHub เช่น `wellness-quest-app`
-2. อัปโหลดไฟล์ทั้ง 3: `index.html`, `quests-data.js`, `README.md`
+2. อัปโหลดไฟล์ทั้ง 4: `index.html`, `quests-data.js`, `logo.png`, `README.md`
 3. ไปที่ **Settings → Pages**
 4. Source เลือก **Deploy from a branch** → Branch: `main` → โฟลเดอร์ `/ (root)` → **Save**
 5. รอ 1-2 นาที จะได้ลิงก์รูปแบบ `https://<ชื่อบัญชี>.github.io/wellness-quest-app/`
