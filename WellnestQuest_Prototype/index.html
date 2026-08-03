@@ -69,13 +69,14 @@
   }
   .share-card{
     position:absolute;top:0;left:0;width:360px;height:640px;
-    background:var(--sage);border-radius:20px;box-sizing:border-box;
+    background:linear-gradient(160deg, var(--peach) 0%, var(--mint) 100%);
+    border-radius:20px;box-sizing:border-box;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:40px 30px;transform-origin:top left;
   }
-  .share-card img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:8px;margin-bottom:20px;}
-  .share-card .sc-progress{color:#fff;font-family:var(--mono);font-size:15px;margin-top:22px;text-align:center;line-height:1.6;}
-  .share-card .sc-brand{color:var(--gold);font-family:var(--mono);font-size:12px;letter-spacing:1.5px;margin-top:28px;}
+  .share-card img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:8px;margin-bottom:20px;box-shadow:0 1px 4px rgba(36,31,25,0.1);}
+  .share-card .sc-progress{color:var(--char);font-family:var(--mono);font-size:15px;margin-top:22px;text-align:center;line-height:1.6;}
+  .share-card .sc-brand{color:var(--coral);font-family:var(--mono);font-size:12px;letter-spacing:1.5px;margin-top:28px;font-weight:700;}
   .download-share-btn{
     width:min(78vw,260px);padding:14px;border-radius:10px;border:none;
     background:var(--coral);color:#fff;font-weight:700;font-size:14px;cursor:pointer;
@@ -198,7 +199,7 @@
       <p class="sc-brand">WELLNEST STORY</p>
     </div>
   </div>
-  <button class="download-share-btn" id="downloadShareBtn">ดาวน์โหลดรูป</button>
+  <button class="download-share-btn" id="downloadShareBtn">บันทึก / แชร์รูปนี้</button>
   <p class="close-hint">แตะที่ว่างเพื่อปิด</p>
 </div>
 
@@ -504,14 +505,38 @@ document.getElementById("downloadShareBtn").addEventListener("click", () => {
   const card = document.getElementById("shareCardEl");
   const prevTransform = card.style.transform;
   card.style.transform = "none"; // capture at true 360x640 size, ignoring on-screen fit scale
-  html2canvas(card, { backgroundColor: null, scale: 3 }).then((canvas) => {
-    card.style.transform = prevTransform;
-    const link = document.createElement("a");
-    link.download = "wellnest-pet-progress.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  });
+
+  html2canvas(card, { backgroundColor: null, scale: 3, useCORS: true })
+    .then((canvas) => {
+      card.style.transform = prevTransform;
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          fallbackDownload(canvas);
+          return;
+        }
+        const file = new File([blob], "wellnest-pet-progress.png", { type: "image/png" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: "Wellnest Story" }).catch(() => {
+            // user cancelled the share sheet, or share failed — fall back to direct download
+            fallbackDownload(canvas);
+          });
+        } else {
+          fallbackDownload(canvas);
+        }
+      }, "image/png");
+    })
+    .catch(() => {
+      card.style.transform = prevTransform;
+      alert("สร้างรูปไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    });
 });
+
+function fallbackDownload(canvas) {
+  const link = document.createElement("a");
+  link.download = "wellnest-pet-progress.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
 
 /* ---------- countdown to midnight ---------- */
 function msUntilMidnight() {
