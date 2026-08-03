@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@600;700&family=Noto+Sans+Thai:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="quests-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   :root{
     --sage:#3F6350;
@@ -40,14 +41,37 @@
     display:flex;align-items:center;gap:6px;margin-top:20px;
     font-family:var(--mono);font-size:13px;color:var(--sage);font-weight:700;
   }
-  .week-row{display:flex;justify-content:space-between;margin-top:10px;}
-  .week-circle{
-    width:38px;height:38px;border-radius:50%;background:var(--grey-circle);
-    display:flex;align-items:center;justify-content:center;
-    font-size:14px;font-weight:700;color:var(--char);
+  .pet-section{display:flex;flex-direction:column;align-items:center;margin-top:18px;}
+  .pet-frame{position:relative;width:180px;height:180px;}
+  .pet-body{
+    position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    font-family:var(--mono);font-weight:700;white-space:nowrap;
+    transition:font-size .4s,color .4s;
   }
-  .week-circle.complete{background:var(--peach-strong);color:#fff;}
-  .week-circle.today{box-shadow:0 0 0 2px var(--coral);}
+  .pet-caption{text-align:center;margin-top:10px;}
+  .pet-stage-name{font-family:'Noto Serif Thai',serif;font-weight:700;font-size:16px;color:var(--char);}
+  .pet-progress-text{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:2px;}
+  .pet-streak-line{font-family:var(--mono);font-size:12px;color:var(--sage);margin-top:6px;}
+  .share-pet-btn{
+    margin-top:14px;background:none;border:1.5px solid var(--sage);color:var(--sage);
+    font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:999px;cursor:pointer;font-family:inherit;
+  }
+  .share-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;
+    align-items:center;justify-content:center;padding:20px;z-index:60;
+  }
+  .share-overlay.show{display:flex;}
+  .share-card{
+    width:260px;aspect-ratio:9/16;background:var(--sage);border-radius:20px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;box-sizing:border-box;
+  }
+  .share-card img{width:40px;height:40px;object-fit:contain;border-radius:50%;background:#fff;padding:4px;margin-bottom:18px;}
+  .share-card .sc-pet{border-radius:50%;transition:none;}
+  .share-card .sc-stage{color:#fff;font-family:'Noto Serif Thai',serif;font-weight:700;font-size:19px;margin-top:18px;}
+  .share-card .sc-progress{color:rgba(255,255,255,0.75);font-family:var(--mono);font-size:12px;margin-top:6px;}
+  .share-card .sc-brand{color:var(--gold);font-family:var(--mono);font-size:10px;letter-spacing:1.5px;margin-top:24px;}
   .quest-card{
     border-radius:22px;padding:22px;margin-top:16px;
     border:none;cursor:pointer;transition:box-shadow .15s;
@@ -120,8 +144,14 @@
       <img src="logo.png" alt="Wellnest Story logo" />
     </div>
 
-    <div class="streak-header"><span id="streakEmoji">🔥</span><span id="streakNum">0</span><span>Day Streak</span></div>
-    <div class="week-row" id="weekRow"></div>
+    <div class="pet-section">
+      <div class="pet-frame" id="petFrame"></div>
+      <div class="pet-caption">
+        <div class="pet-progress-text" id="petProgressText">0/7 วัน</div>
+        <div class="pet-streak-line" id="petStreakLine">🔥 0 Day Streak</div>
+      </div>
+      <button class="share-pet-btn" id="sharePetBtn">📷 บันทึกรูปสัตว์เลี้ยง</button>
+    </div>
 
     <div class="quest-card" id="eatingCard"></div>
     <div class="quest-card" id="activityCard"></div>
@@ -147,6 +177,18 @@
     <button class="primary-btn" onclick="goHome()">รับเควสนี้</button>
   </div>
 
+</div>
+
+<div class="share-overlay" id="shareOverlay">
+  <div class="share-card" id="shareCardEl">
+    <img src="logo.png" alt="Wellnest Story logo" />
+    <div class="pet-frame" id="sharePetFrame"></div>
+    <p class="sc-stage" id="scStage"></p>
+    <p class="sc-progress" id="scProgress"></p>
+    <p class="sc-brand">WELLNEST STORY</p>
+  </div>
+  <button class="primary-btn" id="downloadShareBtn" style="max-width:260px;margin-top:16px;">ดาวน์โหลดรูป</button>
+  <p style="color:#fff;font-size:12.5px;margin-top:10px;">แตะที่ว่างเพื่อปิด</p>
 </div>
 
 <script>
@@ -324,58 +366,127 @@ function renderCard(type) {
   }
 }
 
-/* ---------- week streak row (Day 1-7 program cycle, not calendar week) ---------- */
-function parseDateKey(key) {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y, m - 1, d);
+/* ---------- virtual pet (cumulative growth, placeholder shape) ---------- */
+const STAGE_NAMES = ["ไข่", "กำลังฟัก", "แรกเกิด", "วัยเด็ก", "วัยรุ่น", "เติบโตเต็มที่"];
+const STAGE_COLORS = ["#EFE7D8", "#F6D9AC", "#F0BC7A", "#E8A252", "#E2704F", "#3F6350"];
+const STAGE_SIZES = [40, 55, 70, 85, 100, 115];
+
+function computePetProgress() {
+  const totalDays = loadCompletedDates().length;
+  const stageIndex = Math.min(Math.floor(totalDays / 7), 5);
+  const segmentsFilled = Math.min(totalDays - stageIndex * 7, 7);
+  return { totalDays, stageIndex, segmentsFilled };
 }
-function getProgramStart() {
-  let key = localStorage.getItem("wq_program_start");
-  if (!key) {
-    key = todayKey();
-    localStorage.setItem("wq_program_start", key);
-  }
-  return parseDateKey(key);
+
+function todaysPetTip() {
+  const start = new Date(2026, 0, 1);
+  const diff = Math.floor((new Date() - start) / 86400000);
+  const tips = window.PET_TIPS || [];
+  if (!tips.length) return "";
+  return tips[((diff % tips.length) + tips.length) % tips.length];
 }
-function getCycleDates() {
-  const start = getProgramStart();
-  const today = new Date();
-  const startMid = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const daysSince = Math.round((todayMid - startMid) / 86400000);
-  const cycleIndex = Math.floor(daysSince / 7);
-  const cycleStart = new Date(startMid);
-  cycleStart.setDate(startMid.getDate() + cycleIndex * 7);
-  const dates = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(cycleStart);
-    d.setDate(cycleStart.getDate() + i);
-    dates.push(d);
-  }
-  return dates;
+
+const RING_R = 74;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_R;
+
+function ensurePetSVG(frameEl, idPrefix) {
+  if (frameEl.dataset.petBuilt) return;
+  frameEl.innerHTML = "";
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", "0 0 180 180");
+  svg.setAttribute("width", "180");
+  svg.setAttribute("height", "180");
+  svg.style.position = "absolute";
+  svg.style.top = "0";
+  svg.style.left = "0";
+
+  const track = document.createElementNS(svgNS, "circle");
+  track.setAttribute("cx", 90);
+  track.setAttribute("cy", 90);
+  track.setAttribute("r", RING_R);
+  track.setAttribute("stroke", "#DAD4C8");
+  track.setAttribute("stroke-width", 12);
+  track.setAttribute("fill", "none");
+  svg.appendChild(track);
+
+  const progressCircle = document.createElementNS(svgNS, "circle");
+  progressCircle.setAttribute("cx", 90);
+  progressCircle.setAttribute("cy", 90);
+  progressCircle.setAttribute("r", RING_R);
+  progressCircle.setAttribute("stroke", "#E8A252");
+  progressCircle.setAttribute("stroke-width", 12);
+  progressCircle.setAttribute("fill", "none");
+  progressCircle.setAttribute("stroke-linecap", "round");
+  progressCircle.setAttribute("transform", "rotate(-90 90 90)");
+  progressCircle.setAttribute("stroke-dasharray", RING_CIRCUMFERENCE);
+  progressCircle.setAttribute("stroke-dashoffset", RING_CIRCUMFERENCE);
+  progressCircle.style.transition = "stroke-dashoffset 0.8s ease";
+  progressCircle.id = idPrefix + "ProgressCircle";
+  svg.appendChild(progressCircle);
+  frameEl.appendChild(svg);
+
+  const body = document.createElement("div");
+  body.className = "pet-body";
+  body.id = idPrefix + "Body";
+  frameEl.appendChild(body);
+
+  frameEl.dataset.petBuilt = "1";
 }
-function renderWeekRow() {
-  const completed = new Set(loadCompletedDates());
-  const today = todayKey();
-  const el = document.getElementById("weekRow");
-  el.innerHTML = "";
-  getCycleDates().forEach((d, i) => {
-    const key = todayKey(d);
-    const isComplete = completed.has(key);
-    const isToday = key === today;
-    const circle = document.createElement("div");
-    circle.className = "week-circle " + (isComplete ? "complete " : "") + (isToday ? "today" : "");
-    circle.textContent = i + 1;
-    el.appendChild(circle);
+
+function updatePetVisual(frameEl, idPrefix, progress) {
+  ensurePetSVG(frameEl, idPrefix);
+  const fraction = progress.segmentsFilled / 7;
+  const offset = RING_CIRCUMFERENCE * (1 - fraction);
+  const progressCircle = document.getElementById(idPrefix + "ProgressCircle");
+  requestAnimationFrame(() => {
+    progressCircle.setAttribute("stroke-dashoffset", offset);
   });
+  const body = document.getElementById(idPrefix + "Body");
+  body.textContent = "Pet " + (progress.stageIndex + 1);
+  body.style.fontSize = 14 + progress.stageIndex * 3 + "px";
+  body.style.color = "var(--char)";
+}
+
+function renderPetFrame() {
+  const progress = computePetProgress();
+  updatePetVisual(document.getElementById("petFrame"), "pet", progress);
+
+  const isMaxed = progress.stageIndex === 5 && progress.segmentsFilled >= 7;
+  document.getElementById("petProgressText").textContent = isMaxed
+    ? "โตเต็มที่แล้ว 🎉"
+    : progress.segmentsFilled + "/7 วัน จนกว่าจะโตขึ้นอีกขั้น";
+  document.getElementById("petStreakLine").textContent = "🔥 " + computeStreak() + " Day Streak";
 }
 
 function renderHome() {
   renderCard("eating");
   renderCard("activity");
-  document.getElementById("streakNum").textContent = computeStreak();
-  renderWeekRow();
+  renderPetFrame();
 }
+
+/* ---------- shareable pet card ---------- */
+document.getElementById("sharePetBtn").addEventListener("click", () => {
+  const progress = computePetProgress();
+  updatePetVisual(document.getElementById("sharePetFrame"), "share", progress);
+  document.getElementById("scStage").textContent = STAGE_NAMES[progress.stageIndex];
+  const isMaxed = progress.stageIndex === 5 && progress.segmentsFilled >= 7;
+  document.getElementById("scProgress").textContent = isMaxed
+    ? "โตเต็มที่แล้ว 🎉 · รวม " + progress.totalDays + " วัน"
+    : "รวม " + progress.totalDays + " วันสำเร็จ · 🔥 " + computeStreak() + " Day Streak";
+  document.getElementById("shareOverlay").classList.add("show");
+});
+document.getElementById("shareOverlay").addEventListener("click", (e) => {
+  if (e.target.id === "shareOverlay") document.getElementById("shareOverlay").classList.remove("show");
+});
+document.getElementById("downloadShareBtn").addEventListener("click", () => {
+  html2canvas(document.getElementById("shareCardEl"), { backgroundColor: null, scale: 3.6 }).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = "wellnest-pet-progress.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+});
 
 /* ---------- countdown to midnight ---------- */
 function msUntilMidnight() {
